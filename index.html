@@ -16,14 +16,21 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: white;
+            touch-action: none;
         }
         #game-container {
             position: relative;
             box-shadow: 0 0 70px rgba(0,0,0,0.7);
             border: 5px solid #f1c40f;
             background: linear-gradient(to bottom, #2980b9 0%, #2980b9 20%, #f3e5ab 25%);
+            width: min(100vw - 12px, 800px);
+            aspect-ratio: 4 / 3;
         }
-        canvas { display: block; }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
         
         /* UI y Menús */
         .overlay {
@@ -72,6 +79,69 @@
             text-align: center; display: none; pointer-events: none;
             animation: blink 0.5s infinite;
         }
+        #touch-controls {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 10px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 15;
+            pointer-events: none;
+        }
+        .touch-group {
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
+        .touch-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.75);
+            background: rgba(0, 0, 0, 0.45);
+            color: #fff;
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .touch-btn.fire {
+            width: 86px;
+            height: 86px;
+            font-size: 22px;
+        }
+        @media (hover: none), (pointer: coarse) {
+            #touch-controls {
+                display: flex;
+            }
+            #ui-ingame {
+                top: 6px;
+                left: 6px;
+                width: calc(100% - 12px);
+            }
+            .stats {
+                font-size: 16px;
+                padding: 6px 10px;
+            }
+            #health-bar-container {
+                width: 140px;
+                height: 14px;
+            }
+            h1 {
+                font-size: clamp(36px, 9vw, 60px);
+            }
+            button {
+                padding: 14px 26px;
+                font-size: 20px;
+            }
+        }
         @keyframes blink { 0% {opacity: 0;} 50% {opacity: 1;} 100% {opacity: 0;} }
     </style>
 </head>
@@ -100,6 +170,16 @@
     </div>
 
     <div id="boss-warning">¡ALERTA: ACORAZADO AVISTADO!</div>
+
+    <div id="touch-controls">
+        <div class="touch-group">
+            <div class="touch-btn" data-key="ArrowLeft">◀</div>
+            <div class="touch-btn" data-key="ArrowRight">▶</div>
+        </div>
+        <div class="touch-group">
+            <div class="touch-btn fire" data-key="Space">FUEGO</div>
+        </div>
+    </div>
     
     <canvas id="gameCanvas"></canvas>
 </div>
@@ -131,6 +211,41 @@
     const keys = {};
     window.addEventListener('keydown', e => keys[e.code] = true);
     window.addEventListener('keyup', e => keys[e.code] = false);
+    window.addEventListener('resize', resizeGameContainer);
+    document.addEventListener('gesturestart', e => e.preventDefault());
+
+    function resizeGameContainer() {
+        const maxWidth = Math.min(window.innerWidth - 12, 800);
+        const width = Math.max(320, maxWidth);
+        const container = document.getElementById('game-container');
+        container.style.width = `${width}px`;
+    }
+
+    function setVirtualKey(keyCode, isPressed) {
+        keys[keyCode] = isPressed;
+    }
+
+    function bindTouchButton(button) {
+        const key = button.dataset.key;
+        const press = (event) => {
+            event.preventDefault();
+            setVirtualKey(key, true);
+        };
+        const release = (event) => {
+            event.preventDefault();
+            setVirtualKey(key, false);
+        };
+
+        button.addEventListener('touchstart', press, { passive: false });
+        button.addEventListener('touchend', release, { passive: false });
+        button.addEventListener('touchcancel', release, { passive: false });
+        button.addEventListener('pointerdown', press);
+        button.addEventListener('pointerup', release);
+        button.addEventListener('pointerleave', release);
+    }
+
+    document.querySelectorAll('.touch-btn').forEach(bindTouchButton);
+    resizeGameContainer();
 
     // --- Clases de Entidades ---
 

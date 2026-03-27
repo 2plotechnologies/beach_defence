@@ -18,6 +18,7 @@ El jugador controla un cangrejo que defiende la playa de oleadas de enemigos hum
 ### Controles
 - **Flecha izquierda / derecha**: mover el cangrejo.
 - **Espacio o Flecha arriba**: disparar.
+- **Móvil**: botones táctiles en pantalla para moverse y disparar.
 
 ### Flujo de partida
 1. Pantalla inicial con botón **JUGAR**.
@@ -104,4 +105,3 @@ Variables de estado relevantes:
 - Eliminar/usar variables no utilizadas (`bossDefeated`).
 - Añadir sistema de sonido, pausa y niveles.
 - Persistir récord en `localStorage`.
-
