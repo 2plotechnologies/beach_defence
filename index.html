@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,609 +18,695 @@
             overflow: hidden;
             color: white;
         }
+
         #game-container {
             position: relative;
-            box-shadow: 0 0 70px rgba(0,0,0,0.7);
+            box-shadow: 0 0 70px rgba(0, 0, 0, 0.7);
             border: 5px solid #f1c40f;
             background: linear-gradient(to bottom, #2980b9 0%, #2980b9 20%, #f3e5ab 25%);
         }
-        canvas { display: block; }
-        
+
+        canvas {
+            display: block;
+        }
+
         /* UI y Menús */
         .overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             background: rgba(0, 0, 0, 0.85);
             z-index: 20;
             text-align: center;
         }
+
         #ui-ingame {
             position: absolute;
-            top: 10px; left: 10px; width: 95%;
+            top: 10px;
+            left: 10px;
+            width: 95%;
             pointer-events: none;
             display: none;
             justify-content: space-between;
             z-index: 10;
         }
+
         .stats {
-            font-size: 22px; font-weight: bold;
+            font-size: 22px;
+            font-weight: bold;
             text-shadow: 2px 2px #000;
-            background: rgba(0,0,0,0.4);
-            padding: 8px 15px; border-radius: 5px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 15px;
+            border-radius: 5px;
         }
+
         #health-bar-container {
-            width: 200px; height: 20px;
-            background: #c0392b; border: 2px solid #fff;
+            width: 200px;
+            height: 20px;
+            background: #c0392b;
+            border: 2px solid #fff;
             margin-top: 5px;
         }
+
         #health-bar-fill {
-            height: 100%; background: #2ecc71;
-            width: 100%; transition: width 0.2s;
+            height: 100%;
+            background: #2ecc71;
+            width: 100%;
+            transition: width 0.2s;
         }
-        h1 { font-size: 60px; color: #f1c40f; margin-bottom: 10px; text-shadow: 4px 4px #e67e22; }
+
+        h1 {
+            font-size: 60px;
+            color: #f1c40f;
+            margin-bottom: 10px;
+            text-shadow: 4px 4px #e67e22;
+        }
+
         button {
-            padding: 20px 40px; font-size: 25px;
-            cursor: pointer; background: #e67e22;
-            color: white; border: none; border-radius: 8px;
-            font-family: inherit; transition: 0.2s;
+            padding: 20px 40px;
+            font-size: 25px;
+            cursor: pointer;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: 0.2s;
         }
-        button:hover { background: #d35400; transform: scale(1.1); }
+
+        button:hover {
+            background: #d35400;
+            transform: scale(1.1);
+        }
+
         #boss-warning {
-            position: absolute; top: 40%; width: 100%;
-            color: #e74c3c; font-size: 40px; font-weight: bold;
-            text-align: center; display: none; pointer-events: none;
+            position: absolute;
+            top: 40%;
+            width: 100%;
+            color: #e74c3c;
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+            pointer-events: none;
             animation: blink 0.5s infinite;
         }
-        @keyframes blink { 0% {opacity: 0;} 50% {opacity: 1;} 100% {opacity: 0;} }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #game-footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #bdc3c7;
+            z-index: 100;
+        }
+
+        #game-footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        #game-footer a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="game-container">
-    <div id="ui-ingame">
-        <div class="stats">Puntos: <span id="score">0</span></div>
-        <div style="text-align: right;">
-            <div class="stats">Salud Playa</div>
-            <div id="health-bar-container"><div id="health-bar-fill"></div></div>
+    <div id="game-footer">
+        Game Developed by: Isaias Guzman (2Plo Technologies). This Game is Open Source, you can contribute <a
+            href="https://github.com/2plotechnologies/beach_defence" target="_blank">here</a>.
+    </div>
+
+    <div id="game-container">
+        <div id="ui-ingame">
+            <div class="stats">Puntos: <span id="score">0</span></div>
+            <div style="text-align: right;">
+                <div class="stats">Salud Playa</div>
+                <div id="health-bar-container">
+                    <div id="health-bar-fill"></div>
+                </div>
+            </div>
         </div>
+
+        <div id="start-menu" class="overlay">
+            <h1>BEACH DEFENSE</h1>
+            <p>¡Defiende tu hogar de la invasión humana!</p>
+            <button onclick="startGame()">JUGAR</button>
+        </div>
+
+        <div id="game-over" class="overlay" style="display: none;">
+            <h1 id="end-title" style="color: #e74c3c;">¡DERROTA!</h1>
+            <p id="end-msg">La playa ha sido pavimentada.</p>
+            <div class="stats">Puntaje: <span id="final-score">0</span></div>
+            <button onclick="location.reload()">VOLVER AL MENÚ</button>
+        </div>
+
+        <div id="boss-warning">¡ALERTA: ACORAZADO AVISTADO!</div>
+
+        <canvas id="gameCanvas"></canvas>
     </div>
 
-    <div id="start-menu" class="overlay">
-        <h1>BEACH DEFENSE</h1>
-        <p>¡Defiende tu hogar de la invasión humana!</p>
-        <button onclick="startGame()">JUGAR</button>
-    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const healthFillEl = document.getElementById('health-bar-fill');
 
-    <div id="game-over" class="overlay" style="display: none;">
-        <h1 id="end-title" style="color: #e74c3c;">¡DERROTA!</h1>
-        <p id="end-msg">La playa ha sido pavimentada.</p>
-        <div class="stats">Puntaje: <span id="final-score">0</span></div>
-        <button onclick="location.reload()">VOLVER AL MENÚ</button>
-    </div>
+        canvas.width = 800;
+        canvas.height = 600;
 
-    <div id="boss-warning">¡ALERTA: ACORAZADO AVISTADO!</div>
-    
-    <canvas id="gameCanvas"></canvas>
-</div>
+        // --- Variables de Estado ---
+        let score = 0;
+        let beachHealth = 100;
+        let gameActive = false;
+        let bossSpawned = false;
+        let bossDefeated = false;
+        let enemies = [];
+        let bullets = [];
+        let enemyBullets = [];
+        let particles = [];
+        let powerups = [];
+        let allies = [];
+        let frame = 0;
+        let boss = null;
 
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const healthFillEl = document.getElementById('health-bar-fill');
-    
-    canvas.width = 800;
-    canvas.height = 600;
+        const keys = {};
+        window.addEventListener('keydown', e => keys[e.code] = true);
+        window.addEventListener('keyup', e => keys[e.code] = false);
 
-    // --- Variables de Estado ---
-    let score = 0;
-    let beachHealth = 100;
-    let gameActive = false;
-    let bossSpawned = false;
-    let bossDefeated = false;
-    let enemies = [];
-    let bullets = [];
-    let enemyBullets = [];
-    let particles = [];
-    let powerups = [];
-    let allies = [];
-    let frame = 0;
-    let boss = null;
+        // --- Clases de Entidades ---
 
-    const keys = {};
-    window.addEventListener('keydown', e => keys[e.code] = true);
-    window.addEventListener('keyup', e => keys[e.code] = false);
-
-    // --- Clases de Entidades ---
-
-    class Crab {
-        constructor() {
-            this.width = 60; this.height = 40;
-            this.x = canvas.width / 2 - this.width / 2;
-            this.y = canvas.height - 70;
-            this.speed = 8;
-            this.cooldown = 0;
-        }
-        draw() {
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath();
-            ctx.ellipse(this.x + this.width/2, this.y + this.height/2, this.width/2, this.height/3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Ojos
-            ctx.fillStyle = 'white';
-            ctx.fillRect(this.x + 15, this.y - 12, 6, 18);
-            ctx.fillRect(this.x + 39, this.y - 12, 6, 18);
-            ctx.fillStyle = 'black';
-            ctx.fillRect(this.x + 16, this.y - 12, 4, 6);
-            ctx.fillRect(this.x + 40, this.y - 12, 4, 6);
-            // Pinzas
-            ctx.fillStyle = '#c0392b';
-            ctx.beginPath(); ctx.ellipse(this.x, this.y + 10, 12, 18, Math.PI/4, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(this.x + this.width, this.y + 10, 12, 18, -Math.PI/4, 0, Math.PI*2); ctx.fill();
-        }
-        update() {
-            if (keys['ArrowLeft'] && this.x > 0) this.x -= this.speed;
-            if (keys['ArrowRight'] && this.x < canvas.width - this.width) this.x += this.speed;
-            if ((keys['Space'] || keys['ArrowUp']) && this.cooldown <= 0) {
-                bullets.push(new Bullet(this.x + this.width / 2, this.y, 0, -12, '#3498db'));
-                this.cooldown = 12;
+        class Crab {
+            constructor() {
+                this.width = 60; this.height = 40;
+                this.x = canvas.width / 2 - this.width / 2;
+                this.y = canvas.height - 70;
+                this.speed = 8;
+                this.cooldown = 0;
             }
-            if (this.cooldown > 0) this.cooldown--;
-        }
-        getBounds() { return { x: this.x, y: this.y, width: this.width, height: this.height }; }
-    }
-
-    class Lobster {
-        constructor(side) {
-            this.width = 60; 
-            this.height = 35;
-            this.side = side; // "left" o "right"
-            this.x = side === 'left' ? -100 : canvas.width + 100;
-            this.y = canvas.height - 180 - Math.random() * 80;
-            this.targetX = side === 'left' ? 60 : canvas.width - 120;
-            this.speed = 2;
-            this.cooldown = 60;
-            this.color = '#e67e22'; // Naranja langosta
-            this.darkColor = '#d35400';
-        }
-
-        draw() {
-            ctx.save();
-            // Posicionamos el contexto en el centro de la langosta
-            ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-            
-            // Si viene de la derecha, invertimos el dibujo horizontalmente
-            if (this.side === 'right') ctx.scale(-1, 1);
-
-            // --- Cola segmentada ---
-            ctx.fillStyle = this.darkColor;
-            for (let i = 0; i < 3; i++) {
+            draw() {
+                ctx.fillStyle = '#e74c3c';
                 ctx.beginPath();
-                ctx.ellipse(-20 - (i * 10), 0, 12 - i, 10 - i, 0, 0, Math.PI * 2);
+                ctx.ellipse(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, this.height / 3, 0, 0, Math.PI * 2);
                 ctx.fill();
+                // Ojos
+                ctx.fillStyle = 'white';
+                ctx.fillRect(this.x + 15, this.y - 12, 6, 18);
+                ctx.fillRect(this.x + 39, this.y - 12, 6, 18);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(this.x + 16, this.y - 12, 4, 6);
+                ctx.fillRect(this.x + 40, this.y - 12, 4, 6);
+                // Pinzas
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath(); ctx.ellipse(this.x, this.y + 10, 12, 18, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(this.x + this.width, this.y + 10, 12, 18, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+            }
+            update() {
+                if (keys['ArrowLeft'] && this.x > 0) this.x -= this.speed;
+                if (keys['ArrowRight'] && this.x < canvas.width - this.width) this.x += this.speed;
+                if ((keys['Space'] || keys['ArrowUp']) && this.cooldown <= 0) {
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y, 0, -12, '#3498db'));
+                    this.cooldown = 12;
+                }
+                if (this.cooldown > 0) this.cooldown--;
+            }
+            getBounds() { return { x: this.x, y: this.y, width: this.width, height: this.height }; }
+        }
+
+        class Lobster {
+            constructor(side) {
+                this.width = 60;
+                this.height = 35;
+                this.side = side; // "left" o "right"
+                this.x = side === 'left' ? -100 : canvas.width + 100;
+                this.y = canvas.height - 180 - Math.random() * 80;
+                this.targetX = side === 'left' ? 60 : canvas.width - 120;
+                this.speed = 2;
+                this.cooldown = 60;
+                this.color = '#e67e22'; // Naranja langosta
+                this.darkColor = '#d35400';
             }
 
-            // --- Cuerpo (Cefalotórax) ---
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
-            ctx.fill();
+            draw() {
+                ctx.save();
+                // Posicionamos el contexto en el centro de la langosta
+                ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
 
-            // --- Ojos (al estilo del cangrejo) ---
-            ctx.fillStyle = 'white';
-            ctx.fillRect(10, -15, 5, 12); // Pedúnculo superior
-            ctx.fillRect(10, 5, 5, 12);  // Pedúnculo inferior
-            ctx.fillStyle = 'black';
-            ctx.fillRect(12, -15, 3, 5);
-            ctx.fillRect(12, 12, 3, 5);
+                // Si viene de la derecha, invertimos el dibujo horizontalmente
+                if (this.side === 'right') ctx.scale(-1, 1);
 
-            // --- Tenazas (como las del jugador) ---
-            ctx.fillStyle = this.darkColor;
-            
-            // Pinza superior (rotada)
-            ctx.save();
-            ctx.translate(25, -12);
-            ctx.rotate(-Math.PI / 4);
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+                // --- Cola segmentada ---
+                ctx.fillStyle = this.darkColor;
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.ellipse(-20 - (i * 10), 0, 12 - i, 10 - i, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
 
-            // Pinza inferior (rotada)
-            ctx.save();
-            ctx.translate(25, 12);
-            ctx.rotate(Math.PI / 4);
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+                // --- Cuerpo (Cefalotórax) ---
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
 
-            ctx.restore();
-        }
+                // --- Ojos (al estilo del cangrejo) ---
+                ctx.fillStyle = 'white';
+                ctx.fillRect(10, -15, 5, 12); // Pedúnculo superior
+                ctx.fillRect(10, 5, 5, 12);  // Pedúnculo inferior
+                ctx.fillStyle = 'black';
+                ctx.fillRect(12, -15, 3, 5);
+                ctx.fillRect(12, 12, 3, 5);
 
-        update() {
-            // Movimiento hacia su posición de guardia
-            if (this.side === 'left' && this.x < this.targetX) this.x += this.speed;
-            if (this.side === 'right' && this.x > this.targetX) this.x -= this.speed;
+                // --- Tenazas (como las del jugador) ---
+                ctx.fillStyle = this.darkColor;
 
-            // Disparar burbujas de apoyo (púrpuras)
-            if (this.cooldown <= 0) {
-                // El vector de velocidad depende de hacia dónde mire
-                const vx = this.side === 'left' ? 3 : -3;
-                bullets.push(new Bullet(this.x + this.width/2, this.y + this.height/2, vx, -9, '#9b59b6'));
-                this.cooldown = 90; // Dispara un poco más lento que el cangrejo
-            }
-            this.cooldown--;
-        }
-    }
+                // Pinza superior (rotada)
+                ctx.save();
+                ctx.translate(25, -12);
+                ctx.rotate(-Math.PI / 4);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
 
-    class Bullet {
-        constructor(x, y, vx, vy, color) {
-            this.x = x; this.y = y;
-            this.vx = vx; this.vy = vy;
-            this.radius = 6;
-            this.color = color;
-            this.markedForDeletion = false;
-        }
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill();
-        }
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            if (this.y < 0 || this.y > canvas.height || this.x < 0 || this.x > canvas.width) this.markedForDeletion = true;
-        }
-    }
+                // Pinza inferior (rotada)
+                ctx.save();
+                ctx.translate(25, 12);
+                ctx.rotate(Math.PI / 4);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
 
-    // --- Sistema de Enemigos ---
-    class Enemy {
-        constructor(x, y, width, height, speed, health, damage, color) {
-            this.x = x; this.y = y; this.width = width; this.height = height;
-            this.speed = speed; this.health = health; this.maxHealth = health;
-            this.damage = damage; this.color = color;
-            this.markedForDeletion = false;
-        }
-        update() {
-            this.y += this.speed;
-            if (this.y > canvas.height) {
-                this.markedForDeletion = true;
-                takeDamage(this.damage);
-            }
-        }
-        hit() {
-            this.health--;
-            if (this.health <= 0) {
-                this.markedForDeletion = true;
-                score += (this instanceof Bulldozer) ? 50 : 10;
-                this.explode();
-                return true;
-            }
-            return false;
-        }
-
-        drawLifeBar() {
-            if (this.health >= this.maxHealth) return; // Solo dibujar si está herido
-            const barW = this.width;
-            const barH = 4;
-            ctx.fillStyle = 'red';
-            ctx.fillRect(this.x, this.y - 10, barW, barH);
-            ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(this.x, this.y - 10, barW * (this.health / this.maxHealth), barH);
-        }
-
-        explode() {
-            for(let i=0; i<8; i++) particles.push(new Particle(this.x + this.width/2, this.y + this.height/2, this.color));
-        }
-    }
-
-    // Enemigo 1: Soldado Humanizado
-    class Soldier extends Enemy {
-        constructor() {
-            // x aleatoria, y arriba, ancho, alto, velocidad, vida(1), daño(10)
-            const x = Math.random() * (canvas.width - 30);
-            const speed = 1.2 + (score / 500); // Lenta progresión de velocidad
-            super(x, -60, 30, 50, speed, 1, 10);
-            this.particleColor = '#556b2f'; // Verde militar
-            this.skinColor = '#e0ac69'; // Tono de piel básico
-        }
-
-        draw() {
-            const cx = this.x + this.width/2;
-            const cy = this.y + this.height/2;
-
-            // Cuerpo (Uniforme Camuflaje simple)
-            ctx.fillStyle = '#78866b'; // Base caqui
-            ctx.fillRect(this.x + 5, this.y + 15, 20, 25);
-            // Manchas camuflaje
-            ctx.fillStyle = '#414833';
-            ctx.fillRect(this.x + 8, this.y + 20, 5, 5);
-            ctx.fillRect(this.x + 18, this.y + 30, 4, 6);
-
-            // Piernas/Botas
-            ctx.fillStyle = '#3e2723'; // Marrón oscuro
-            ctx.fillRect(this.x + 5, this.y + 40, 8, 10); // Izq
-            ctx.fillRect(this.x + 17, this.y + 40, 8, 10); // Der
-
-            // Cabeza y Casco
-            ctx.fillStyle = this.skinColor;
-            ctx.beginPath(); ctx.arc(cx, this.y + 10, 8, 0, Math.PI*2); ctx.fill(); // Cara
-            
-            ctx.fillStyle = '#556b2f'; // Casco verde oliva
-            ctx.beginPath();
-            ctx.arc(cx, this.y + 8, 9, Math.PI, 0); // Semicírculo superior
-            ctx.fill();
-            ctx.fillRect(this.x + 5, this.y + 6, 20, 3); // Borde casco
-
-            // Arma (Fusil simple)
-            ctx.fillStyle = '#212121';
-            ctx.fillRect(this.x + 18, this.y + 20, 25, 5); // Cañón
-            ctx.fillRect(this.x + 20, this.y + 23, 6, 10); // Cargador
-        }
-    }
-
-    // Enemigo 2: Máquina Bulldozer (Blindado)
-    class Bulldozer extends Enemy {
-        constructor() {
-            // Ancho grande, alto mediano, lento, mucha vida(3), mucho daño(30)
-            const x = Math.random() * (canvas.width - 80);
-            const speed = 0.6 + (score / 1000);
-            super(x, -80, 80, 60, speed, 3, 30);
-            this.particleColor = '#f1c40f'; // Metal amarillo
-        }
-
-        draw() {
-            // Chasis principal (Amarillo maquinaria pesada)
-            ctx.fillStyle = '#f1c40f';
-            ctx.fillRect(this.x, this.y + 15, this.width, this.height - 25);
-            
-            // Cabina
-            ctx.fillStyle = '#34495e'; // Metal oscuro
-            ctx.fillRect(this.x + 15, this.y, 40, 20);
-            // Ventana
-            ctx.fillStyle = '#81d4fa';
-            ctx.fillRect(this.x + 20, this.y + 4, 15, 10);
-
-            // Orugas (Tread)
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(this.x - 5, this.y + this.height - 15, this.width + 10, 15);
-            // Detalles orugas
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
-            for(let i=0; i<this.width+10; i+=10) {
-                ctx.strokeRect(this.x - 5 + i, this.y + this.height - 15, 5, 15);
+                ctx.restore();
             }
 
-            // Pala delantera (Cuchilla) - El elemento amenazante
-            ctx.fillStyle = '#95a5a6'; // Metal gastado
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y + this.height - 5);
-            ctx.lineTo(this.x - 15, this.y + this.height + 15); // Punta inferior
-            ctx.lineTo(this.x - 15, this.y + 40); // Punta superior
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+            update() {
+                // Movimiento hacia su posición de guardia
+                if (this.side === 'left' && this.x < this.targetX) this.x += this.speed;
+                if (this.side === 'right' && this.x > this.targetX) this.x -= this.speed;
 
-            // Humo de escape (Detalle visual estético)
-            if (frame % 10 < 5) {
-                ctx.fillStyle = 'rgba(100,100,100,0.5)';
-                ctx.beginPath(); ctx.arc(this.x + 60, this.y - 5, 5, 0, Math.PI*2); ctx.fill();
+                // Disparar burbujas de apoyo (púrpuras)
+                if (this.cooldown <= 0) {
+                    // El vector de velocidad depende de hacia dónde mire
+                    const vx = this.side === 'left' ? 3 : -3;
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y + this.height / 2, vx, -9, '#9b59b6'));
+                    this.cooldown = 90; // Dispara un poco más lento que el cangrejo
+                }
+                this.cooldown--;
+            }
+        }
+
+        class Bullet {
+            constructor(x, y, vx, vy, color) {
+                this.x = x; this.y = y;
+                this.vx = vx; this.vy = vy;
+                this.radius = 6;
+                this.color = color;
+                this.markedForDeletion = false;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.y < 0 || this.y > canvas.height || this.x < 0 || this.x > canvas.width) this.markedForDeletion = true;
+            }
+        }
+
+        // --- Sistema de Enemigos ---
+        class Enemy {
+            constructor(x, y, width, height, speed, health, damage, color) {
+                this.x = x; this.y = y; this.width = width; this.height = height;
+                this.speed = speed; this.health = health; this.maxHealth = health;
+                this.damage = damage; this.color = color;
+                this.markedForDeletion = false;
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.markedForDeletion = true;
+                    takeDamage(this.damage);
+                }
+            }
+            hit() {
+                this.health--;
+                if (this.health <= 0) {
+                    this.markedForDeletion = true;
+                    score += (this instanceof Bulldozer) ? 50 : 10;
+                    this.explode();
+                    return true;
+                }
+                return false;
             }
 
-            this.drawLifeBar();
-        }
-    }
-
-    // --- EL JEFE FINAL: ACORAZADO ---
-    class BossShip {
-        constructor() {
-            this.width = 600;
-            this.height = 120;
-            this.x = canvas.width / 2 - this.width / 2;
-            this.y = 20;
-            this.health = 100;
-            this.maxHealth = 100;
-            this.cooldown = 0;
-        }
-        draw() {
-            // Casco del barco
-            ctx.fillStyle = '#34495e';
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x + this.width, this.y);
-            ctx.lineTo(this.x + this.width - 50, this.y + this.height);
-            ctx.lineTo(this.x + 50, this.y + this.height);
-            ctx.closePath();
-            ctx.fill();
-
-            // Torres de artillería
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(this.x + 150, this.y - 20, 60, 25);
-            ctx.fillRect(this.x + 390, this.y - 20, 60, 25);
-
-            // Cañones
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(this.x + 160, this.y - 10, 100, 8);
-            ctx.fillRect(this.x + 340, this.y - 10, 100, 8);
-
-            // Barra de vida del Boss
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(100, 5, 600, 15);
-            ctx.fillStyle = '#e74c3c';
-            ctx.fillRect(100, 5, 600 * (this.health/this.maxHealth), 15);
-            ctx.strokeStyle = 'white'; ctx.strokeRect(100, 5, 600, 15);
-        }
-        update() {
-            if (this.cooldown <= 0) {
-                // Dispara ráfagas
-                const targetX = player.x + player.width/2;
-                const angle = Math.atan2(player.y - this.y, targetX - (this.x + 300));
-                enemyBullets.push(new Bullet(this.x + 200, this.y + 40, Math.cos(angle-0.2)*5, Math.sin(angle-0.2)*5, 'red'));
-                enemyBullets.push(new Bullet(this.x + 400, this.y + 40, Math.cos(angle+0.2)*5, Math.sin(angle+0.2)*5, 'red'));
-                this.cooldown = 40;
+            drawLifeBar() {
+                if (this.health >= this.maxHealth) return; // Solo dibujar si está herido
+                const barW = this.width;
+                const barH = 4;
+                ctx.fillStyle = 'red';
+                ctx.fillRect(this.x, this.y - 10, barW, barH);
+                ctx.fillStyle = '#2ecc71';
+                ctx.fillRect(this.x, this.y - 10, barW * (this.health / this.maxHealth), barH);
             }
-            this.cooldown--;
-        }
-        hit() {
-            this.health--;
-            for(let i=0; i<3; i++) particles.push(new Particle(this.x + Math.random()*this.width, this.y + this.height, '#95a5a6'));
-            if (this.health <= 0) return true;
-            return false;
-        }
-    }
 
-    class HealthKit {
-        constructor() {
-            this.x = Math.random()*(canvas.width-30); this.y = -30; this.speed = 2;
-            this.width = 30; this.height = 30; this.markedForDeletion = false;
-        }
-        draw() {
-            ctx.fillStyle = 'white'; ctx.fillRect(this.x, this.y, 30, 30);
-            ctx.fillStyle = 'red'; ctx.fillRect(this.x+12, this.y+5, 6, 20); ctx.fillRect(this.x+5, this.y+12, 20, 6);
-        }
-        update() { this.y += this.speed; if(this.y > canvas.height) this.markedForDeletion = true; }
-        getBounds() { return { x: this.x, y: this.y, width: this.width, height: this.height }; }
-    }
-
-    class Particle {
-        constructor(x, y, color) {
-            this.x = x; this.y = y; this.color = color;
-            this.vx = (Math.random()-0.5)*10; this.vy = (Math.random()-0.5)*10;
-            this.life = 1.0;
-        }
-        update() { this.x += this.vx; this.y += this.vy; this.life -= 0.02; }
-        draw() { ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 4, 4); ctx.globalAlpha = 1; }
-    }
-
-    // --- Lógica de Juego ---
-    const player = new Crab();
-
-    function startGame() {
-        document.getElementById('start-menu').style.display = 'none';
-        document.getElementById('ui-ingame').style.display = 'flex';
-        gameActive = true;
-        animate();
-    }
-
-    function takeDamage(amount) {
-        beachHealth -= amount;
-        healthFillEl.style.width = Math.max(0, beachHealth) + '%';
-        if (beachHealth <= 0) endGame(false);
-    }
-
-    function spawnManagers() {
-        if (bossSpawned) return; // No salen enemigos si el Boss está
-
-        if (score >= 1000) {
-            triggerBoss();
-            return;
+            explode() {
+                for (let i = 0; i < 8; i++) particles.push(new Particle(this.x + this.width / 2, this.y + this.height / 2, this.color));
+            }
         }
 
-        if (frame % 60 === 0) enemies.push(new Soldier());
-        if (score > 200 && frame % 400 === 0) enemies.push(new Bulldozer());
-        
-        // Spawn de Langostas Aliadas
-        if (frame % 800 === 0) {
-            allies.push(new Lobster(Math.random() > 0.5 ? 'left' : 'right'));
+        // Enemigo 1: Soldado Humanizado
+        class Soldier extends Enemy {
+            constructor() {
+                // x aleatoria, y arriba, ancho, alto, velocidad, vida(1), daño(10)
+                const x = Math.random() * (canvas.width - 30);
+                const speed = 1.2 + (score / 500); // Lenta progresión de velocidad
+                super(x, -60, 30, 50, speed, 1, 10);
+                this.particleColor = '#556b2f'; // Verde militar
+                this.skinColor = '#e0ac69'; // Tono de piel básico
+            }
+
+            draw() {
+                const cx = this.x + this.width / 2;
+                const cy = this.y + this.height / 2;
+
+                // Cuerpo (Uniforme Camuflaje simple)
+                ctx.fillStyle = '#78866b'; // Base caqui
+                ctx.fillRect(this.x + 5, this.y + 15, 20, 25);
+                // Manchas camuflaje
+                ctx.fillStyle = '#414833';
+                ctx.fillRect(this.x + 8, this.y + 20, 5, 5);
+                ctx.fillRect(this.x + 18, this.y + 30, 4, 6);
+
+                // Piernas/Botas
+                ctx.fillStyle = '#3e2723'; // Marrón oscuro
+                ctx.fillRect(this.x + 5, this.y + 40, 8, 10); // Izq
+                ctx.fillRect(this.x + 17, this.y + 40, 8, 10); // Der
+
+                // Cabeza y Casco
+                ctx.fillStyle = this.skinColor;
+                ctx.beginPath(); ctx.arc(cx, this.y + 10, 8, 0, Math.PI * 2); ctx.fill(); // Cara
+
+                ctx.fillStyle = '#556b2f'; // Casco verde oliva
+                ctx.beginPath();
+                ctx.arc(cx, this.y + 8, 9, Math.PI, 0); // Semicírculo superior
+                ctx.fill();
+                ctx.fillRect(this.x + 5, this.y + 6, 20, 3); // Borde casco
+
+                // Arma (Fusil simple)
+                ctx.fillStyle = '#212121';
+                ctx.fillRect(this.x + 18, this.y + 20, 25, 5); // Cañón
+                ctx.fillRect(this.x + 20, this.y + 23, 6, 10); // Cargador
+            }
         }
 
-        // Spawn Botiquín
-        if (beachHealth < 50 && frame % 600 === 0) powerups.push(new HealthKit());
-    }
+        // Enemigo 2: Máquina Bulldozer (Blindado)
+        class Bulldozer extends Enemy {
+            constructor() {
+                // Ancho grande, alto mediano, lento, mucha vida(3), mucho daño(30)
+                const x = Math.random() * (canvas.width - 80);
+                const speed = 0.6 + (score / 1000);
+                super(x, -80, 80, 60, speed, 3, 30);
+                this.particleColor = '#f1c40f'; // Metal amarillo
+            }
 
-    function triggerBoss() {
-        bossSpawned = true;
-        enemies = []; // Limpiar enemigos menores
-        document.getElementById('boss-warning').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('boss-warning').style.display = 'none';
-            boss = new BossShip();
-        }, 3000);
-    }
+            draw() {
+                // Chasis principal (Amarillo maquinaria pesada)
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(this.x, this.y + 15, this.width, this.height - 25);
 
-    function checkCollisions() {
-        // Balas aliadas vs Enemigos
-        bullets.forEach(b => {
-            enemies.forEach(e => {
-                if (!b.markedForDeletion && !e.markedForDeletion && 
-                    b.x > e.x && b.x < e.x + e.width && b.y > e.y && b.y < e.y + e.height) {
+                // Cabina
+                ctx.fillStyle = '#34495e'; // Metal oscuro
+                ctx.fillRect(this.x + 15, this.y, 40, 20);
+                // Ventana
+                ctx.fillStyle = '#81d4fa';
+                ctx.fillRect(this.x + 20, this.y + 4, 15, 10);
+
+                // Orugas (Tread)
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(this.x - 5, this.y + this.height - 15, this.width + 10, 15);
+                // Detalles orugas
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+                for (let i = 0; i < this.width + 10; i += 10) {
+                    ctx.strokeRect(this.x - 5 + i, this.y + this.height - 15, 5, 15);
+                }
+
+                // Pala delantera (Cuchilla) - El elemento amenazante
+                ctx.fillStyle = '#95a5a6'; // Metal gastado
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.height - 5);
+                ctx.lineTo(this.x - 15, this.y + this.height + 15); // Punta inferior
+                ctx.lineTo(this.x - 15, this.y + 40); // Punta superior
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Humo de escape (Detalle visual estético)
+                if (frame % 10 < 5) {
+                    ctx.fillStyle = 'rgba(100,100,100,0.5)';
+                    ctx.beginPath(); ctx.arc(this.x + 60, this.y - 5, 5, 0, Math.PI * 2); ctx.fill();
+                }
+
+                this.drawLifeBar();
+            }
+        }
+
+        // --- EL JEFE FINAL: ACORAZADO ---
+        class BossShip {
+            constructor() {
+                this.width = 600;
+                this.height = 120;
+                this.x = canvas.width / 2 - this.width / 2;
+                this.y = 20;
+                this.health = 100;
+                this.maxHealth = 100;
+                this.cooldown = 0;
+            }
+            draw() {
+                // Casco del barco
+                ctx.fillStyle = '#34495e';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x + this.width, this.y);
+                ctx.lineTo(this.x + this.width - 50, this.y + this.height);
+                ctx.lineTo(this.x + 50, this.y + this.height);
+                ctx.closePath();
+                ctx.fill();
+
+                // Torres de artillería
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(this.x + 150, this.y - 20, 60, 25);
+                ctx.fillRect(this.x + 390, this.y - 20, 60, 25);
+
+                // Cañones
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(this.x + 160, this.y - 10, 100, 8);
+                ctx.fillRect(this.x + 340, this.y - 10, 100, 8);
+
+                // Barra de vida del Boss
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(100, 5, 600, 15);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(100, 5, 600 * (this.health / this.maxHealth), 15);
+                ctx.strokeStyle = 'white'; ctx.strokeRect(100, 5, 600, 15);
+            }
+            update() {
+                if (this.cooldown <= 0) {
+                    // Dispara ráfagas
+                    const targetX = player.x + player.width / 2;
+                    const angle = Math.atan2(player.y - this.y, targetX - (this.x + 300));
+                    enemyBullets.push(new Bullet(this.x + 200, this.y + 40, Math.cos(angle - 0.2) * 5, Math.sin(angle - 0.2) * 5, 'red'));
+                    enemyBullets.push(new Bullet(this.x + 400, this.y + 40, Math.cos(angle + 0.2) * 5, Math.sin(angle + 0.2) * 5, 'red'));
+                    this.cooldown = 40;
+                }
+                this.cooldown--;
+            }
+            hit() {
+                this.health--;
+                for (let i = 0; i < 3; i++) particles.push(new Particle(this.x + Math.random() * this.width, this.y + this.height, '#95a5a6'));
+                if (this.health <= 0) return true;
+                return false;
+            }
+        }
+
+        class HealthKit {
+            constructor() {
+                this.x = Math.random() * (canvas.width - 30); this.y = -30; this.speed = 2;
+                this.width = 30; this.height = 30; this.markedForDeletion = false;
+            }
+            draw() {
+                ctx.fillStyle = 'white'; ctx.fillRect(this.x, this.y, 30, 30);
+                ctx.fillStyle = 'red'; ctx.fillRect(this.x + 12, this.y + 5, 6, 20); ctx.fillRect(this.x + 5, this.y + 12, 20, 6);
+            }
+            update() { this.y += this.speed; if (this.y > canvas.height) this.markedForDeletion = true; }
+            getBounds() { return { x: this.x, y: this.y, width: this.width, height: this.height }; }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.vx = (Math.random() - 0.5) * 10; this.vy = (Math.random() - 0.5) * 10;
+                this.life = 1.0;
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.life -= 0.02; }
+            draw() { ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 4, 4); ctx.globalAlpha = 1; }
+        }
+
+        // --- Lógica de Juego ---
+        const player = new Crab();
+
+        function startGame() {
+            document.getElementById('start-menu').style.display = 'none';
+            document.getElementById('ui-ingame').style.display = 'flex';
+            gameActive = true;
+            animate();
+        }
+
+        function takeDamage(amount) {
+            beachHealth -= amount;
+            healthFillEl.style.width = Math.max(0, beachHealth) + '%';
+            if (beachHealth <= 0) endGame(false);
+        }
+
+        function spawnManagers() {
+            if (bossSpawned) return; // No salen enemigos si el Boss está
+
+            if (score >= 1000) {
+                triggerBoss();
+                return;
+            }
+
+            if (frame % 60 === 0) enemies.push(new Soldier());
+            if (score > 200 && frame % 400 === 0) enemies.push(new Bulldozer());
+
+            // Spawn de Langostas Aliadas
+            if (frame % 800 === 0) {
+                allies.push(new Lobster(Math.random() > 0.5 ? 'left' : 'right'));
+            }
+
+            // Spawn Botiquín
+            if (beachHealth < 50 && frame % 600 === 0) powerups.push(new HealthKit());
+        }
+
+        function triggerBoss() {
+            bossSpawned = true;
+            enemies = []; // Limpiar enemigos menores
+            document.getElementById('boss-warning').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('boss-warning').style.display = 'none';
+                boss = new BossShip();
+            }, 3000);
+        }
+
+        function checkCollisions() {
+            // Balas aliadas vs Enemigos
+            bullets.forEach(b => {
+                enemies.forEach(e => {
+                    if (!b.markedForDeletion && !e.markedForDeletion &&
+                        b.x > e.x && b.x < e.x + e.width && b.y > e.y && b.y < e.y + e.height) {
+                        b.markedForDeletion = true;
+                        e.hit();
+                    }
+                });
+                // Balas vs Boss
+                if (boss && !b.markedForDeletion && b.y < boss.y + boss.height && b.x > boss.x && b.x < boss.x + boss.width) {
                     b.markedForDeletion = true;
-                    e.hit();
+                    if (boss.hit()) endGame(true);
                 }
             });
-            // Balas vs Boss
-            if (boss && !b.markedForDeletion && b.y < boss.y + boss.height && b.x > boss.x && b.x < boss.x + boss.width) {
-                b.markedForDeletion = true;
-                if (boss.hit()) endGame(true);
-            }
-        });
 
-        // Balas del Boss vs Playa/Cangrejo
-        enemyBullets.forEach(eb => {
-            if (eb.y > canvas.height - 30) {
-                eb.markedForDeletion = true;
-                takeDamage(5);
-            }
-        });
+            // Balas del Boss vs Playa/Cangrejo
+            enemyBullets.forEach(eb => {
+                if (eb.y > canvas.height - 30) {
+                    eb.markedForDeletion = true;
+                    takeDamage(5);
+                }
+            });
 
-        // Recoger Botiquín
-        powerups.forEach(p => {
-            if (isColliding(player.getBounds(), p.getBounds())) {
-                p.markedForDeletion = true;
-                beachHealth = Math.min(100, beachHealth + 20);
-                healthFillEl.style.width = beachHealth + '%';
-            }
-        });
-    }
-
-    function isColliding(r1, r2) {
-        return r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y;
-    }
-
-    function endGame(victory) {
-        gameActive = false;
-        document.getElementById('game-over').style.display = 'flex';
-        document.getElementById('final-score').innerText = score;
-        if (victory) {
-            document.getElementById('end-title').innerText = "¡VICTORIA!";
-            document.getElementById('end-title').style.color = "#2ecc71";
-            document.getElementById('end-msg').innerText = "El Acorazado ha sido hundido. ¡La playa es libre!";
+            // Recoger Botiquín
+            powerups.forEach(p => {
+                if (isColliding(player.getBounds(), p.getBounds())) {
+                    p.markedForDeletion = true;
+                    beachHealth = Math.min(100, beachHealth + 20);
+                    healthFillEl.style.width = beachHealth + '%';
+                }
+            });
         }
-    }
 
-    function animate() {
-        if (!gameActive) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function isColliding(r1, r2) {
+            return r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y;
+        }
 
-        player.update();
-        player.draw();
+        function endGame(victory) {
+            gameActive = false;
+            document.getElementById('game-over').style.display = 'flex';
+            document.getElementById('final-score').innerText = score;
+            if (victory) {
+                document.getElementById('end-title').innerText = "¡VICTORIA!";
+                document.getElementById('end-title').style.color = "#2ecc71";
+                document.getElementById('end-msg').innerText = "El Acorazado ha sido hundido. ¡La playa es libre!";
+            }
+        }
 
-        if (boss) { boss.update(); boss.draw(); }
+        function animate() {
+            if (!gameActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        spawnManagers();
-        checkCollisions();
+            player.update();
+            player.draw();
 
-        allies.forEach(a => { a.update(); a.draw(); });
-        enemies = enemies.filter(e => !e.markedForDeletion);
-        enemies.forEach(e => { e.update(); e.draw(); });
+            if (boss) { boss.update(); boss.draw(); }
 
-        bullets = bullets.filter(b => !b.markedForDeletion);
-        bullets.forEach(b => { b.update(); b.draw(); });
+            spawnManagers();
+            checkCollisions();
 
-        enemyBullets = enemyBullets.filter(eb => !eb.markedForDeletion);
-        enemyBullets.forEach(eb => { eb.update(); eb.draw(); });
+            allies.forEach(a => { a.update(); a.draw(); });
+            enemies = enemies.filter(e => !e.markedForDeletion);
+            enemies.forEach(e => { e.update(); e.draw(); });
 
-        powerups = powerups.filter(p => !p.markedForDeletion);
-        powerups.forEach(p => { p.update(); p.draw(); });
+            bullets = bullets.filter(b => !b.markedForDeletion);
+            bullets.forEach(b => { b.update(); b.draw(); });
 
-        particles = particles.filter(p => p.life > 0);
-        particles.forEach(p => { p.update(); p.draw(); });
+            enemyBullets = enemyBullets.filter(eb => !eb.markedForDeletion);
+            enemyBullets.forEach(eb => { eb.update(); eb.draw(); });
 
-        scoreEl.innerText = score;
-        frame++;
-        requestAnimationFrame(animate);
-    }
-</script>
+            powerups = powerups.filter(p => !p.markedForDeletion);
+            powerups.forEach(p => { p.update(); p.draw(); });
+
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            scoreEl.innerText = score;
+            frame++;
+            requestAnimationFrame(animate);
+        }
+    </script>
 </body>
+
 </html>
