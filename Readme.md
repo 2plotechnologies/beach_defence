@@ -102,6 +102,6 @@ Variables de estado relevantes:
 ## Posibles mejoras (documentación técnica rápida)
 - Usar módulos JS para separar entidades y lógica.
 - Ajustar dificultad con curvas por tiempo en lugar de depender solo de `score` y `frame`.
-- Eliminar/usar variables no utilizadas (`bossDefeated`).
-- Añadir sistema de sonido, pausa y niveles.
-- Persistir récord en `localStorage`.
+- Eliminar/usar variables no utilizadas (`bossDefeated`), (Por revisar).
+- Añadir sistema de sonido, pausa y niveles (Pronto).
+- Persistir récord en `localStorage` (Pronto).
